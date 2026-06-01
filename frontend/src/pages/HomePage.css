@@ -1,0 +1,95 @@
+/* src/pages/HomePage.css */
+.home-products { padding: 80px 0 60px; }
+
+.home-products__tabs {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+.home-products__tab {
+  padding: 8px 22px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  border-bottom: 2px solid transparent;
+  transition: var(--transition);
+  letter-spacing: 0.3px;
+}
+.home-products__tab:hover { color: var(--color-primary); }
+.home-products__tab--active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  font-weight: 600;
+}
+.home-products__cta {
+  text-align: center;
+  margin-top: 48px;
+}
+.home-products__empty {
+  text-align: center;
+  padding: 60px;
+  color: var(--color-text-muted);
+}
+.home-products__empty a { color: var(--color-secondary); }
+
+/* Deal Banner */
+.deal-banner {
+  background: var(--color-surface-alt);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  margin: 40px 0;
+  overflow: hidden;
+}
+.deal-banner__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 60px 24px;
+  gap: 40px;
+}
+.deal-banner__tag {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--color-secondary);
+  margin-bottom: 12px;
+}
+.deal-banner__tag span {
+  display: block;
+  width: 30px; height: 2px;
+  background: var(--color-secondary);
+}
+.deal-banner__content h2 {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 4vw, 52px);
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 1.1;
+}
+.deal-banner__content p {
+  color: var(--color-text-muted);
+  font-size: 15px;
+  margin-bottom: 28px;
+  max-width: 400px;
+}
+.deal-banner__image {
+  width: 380px;
+  flex-shrink: 0;
+}
+.deal-banner__image img {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  object-fit: cover;
+  max-height: 320px;
+}
+
+@media (max-width: 768px) {
+  .deal-banner__inner { flex-direction: column; text-align: center; }
+  .deal-banner__content p { margin: 0 auto 28px; }
+  .deal-banner__tag { justify-content: center; }
+  .deal-banner__image { width: 100%; }
+}
