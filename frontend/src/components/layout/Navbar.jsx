@@ -1,51 +1,59 @@
 // src/components/layout/Navbar.jsx
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
-import { FiShoppingBag, FiUser, FiSearch, FiMenu, FiX, FiHeart, FiLogOut } from 'react-icons/fi';
+import { FiShoppingBag, FiUser, FiSearch, FiMenu, FiX, FiLogOut } from 'react-icons/fi';
 import SearchBar from '../common/SearchBar';
 import './Navbar.css';
 
 const Navbar = () => {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [mobileOpen,   setMobileOpen]   = useState(false);
+  const [scrolled,     setScrolled]     = useState(false);
+  const [searchOpen,   setSearchOpen]   = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const { user, logout, isAdmin } = useAuth();
-  const { cartCount } = useCart();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { user, logout }  = useAuth();
+  const { cartCount }     = useCart();
+  const location          = useLocation();
 
-  // Detect scroll for shadow effect
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => setMobileOpen(false), [location]);
 
+  useEffect(() => {
+    const close = (e) => { if (!e.target.closest('.navbar__user-wrap')) setUserMenuOpen(false); };
+    document.addEventListener('click', close);
+    return () => document.removeEventListener('click', close);
+  }, []);
+
   const navLinks = [
-    { label: 'Home', to: '/' },
-    { label: 'Shop', to: '/shop' },
+    { label: 'Home',  to: '/' },
+    { label: 'Shop',  to: '/shop' },
     { label: 'Women', to: '/shop/Women' },
-    { label: 'Kids', to: '/shop/Kids' },
-    { label: 'Sale', to: '/shop?sale=true' },
+    { label: 'Kids',  to: '/shop/Kids' },
+    { label: 'Sale',  to: '/shop?sale=true' },
   ];
 
   return (
     <>
       <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
         <div className="container navbar__inner">
+
           {/* Logo */}
-          <Link to="/" className="navbar__logo">
+          <Link
+            to="/"
+            className="navbar__logo"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
             <span className="navbar__logo-icon">✦</span>
             Suiting<span>Studio</span>
           </Link>
 
-          {/* Desktop Nav */}
+          {/* Desktop links */}
           <ul className="navbar__links">
             {navLinks.map((link) => (
               <li key={link.to}>
@@ -59,43 +67,37 @@ const Navbar = () => {
             ))}
           </ul>
 
-          {/* Icons */}
           <div className="navbar__icons">
+            {/* Search */}
             <button className="navbar__icon-btn" onClick={() => setSearchOpen(!searchOpen)} aria-label="Search">
               <FiSearch size={20} />
             </button>
 
-            {/* User menu */}
-            <div className="navbar__user-wrap">
-              <button
-                className="navbar__icon-btn"
-                onClick={() => setUserMenuOpen(!userMenuOpen)}
-                aria-label="Account"
-              >
+            {/* User — only for logged-in non-admin customers */}
+            {user && !user.isAdmin && (
+              <div className="navbar__user-wrap">
+                <button className="navbar__icon-btn"
+                  onClick={(e) => { e.stopPropagation(); setUserMenuOpen(!userMenuOpen); }}>
+                  <FiUser size={20} />
+                </button>
+                {userMenuOpen && (
+                  <div className="navbar__user-dropdown">
+                    <span className="navbar__user-name">Hi, {user.name?.split(' ')[0]}</span>
+                    <Link to="/orders" onClick={() => setUserMenuOpen(false)}>My Orders</Link>
+                    <button onClick={() => { logout(); setUserMenuOpen(false); }}>
+                      <FiLogOut size={14} /> Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Login icon — guests only */}
+            {!user && (
+              <Link to="/login" className="navbar__icon-btn" aria-label="Login">
                 <FiUser size={20} />
-              </button>
-              {userMenuOpen && (
-                <div className="navbar__user-dropdown">
-                  {user ? (
-                    <>
-                      <span className="navbar__user-name">Hi, {user.name?.split(' ')[0]}</span>
-                      {isAdmin && (
-                        <Link to="/admin" onClick={() => setUserMenuOpen(false)}>Admin Panel</Link>
-                      )}
-                      <Link to="/orders" onClick={() => setUserMenuOpen(false)}>My Orders</Link>
-                      <button onClick={() => { logout(); setUserMenuOpen(false); }}>
-                        <FiLogOut size={14} /> Logout
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <Link to="/login" onClick={() => setUserMenuOpen(false)}>Login</Link>
-                      <Link to="/register" onClick={() => setUserMenuOpen(false)}>Register</Link>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
+              </Link>
+            )}
 
             {/* Cart */}
             <Link to="/cart" className="navbar__icon-btn navbar__cart-btn" aria-label="Cart">
@@ -105,18 +107,14 @@ const Navbar = () => {
               )}
             </Link>
 
-            {/* Mobile hamburger */}
-            <button
-              className="navbar__icon-btn navbar__hamburger"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label="Menu"
-            >
+            {/* Hamburger */}
+            <button className="navbar__icon-btn navbar__hamburger"
+              onClick={() => setMobileOpen(!mobileOpen)}>
               {mobileOpen ? <FiX size={22} /> : <FiMenu size={22} />}
             </button>
           </div>
         </div>
 
-        {/* Search bar */}
         {searchOpen && (
           <div className="navbar__search-bar">
             <SearchBar onClose={() => setSearchOpen(false)} />
@@ -124,32 +122,27 @@ const Navbar = () => {
         )}
       </nav>
 
-      {/* Mobile menu overlay */}
+      {/* Mobile Menu — NO logout at all, NO admin options */}
       <div className={`mobile-menu ${mobileOpen ? 'mobile-menu--open' : ''}`}>
         <ul>
           {navLinks.map((link) => (
-            <li key={link.to}>
-              <Link to={link.to}>{link.label}</Link>
-            </li>
+            <li key={link.to}><Link to={link.to}>{link.label}</Link></li>
           ))}
+          {/* Only for guests */}
           {!user && (
             <>
               <li><Link to="/login">Login</Link></li>
               <li><Link to="/register">Register</Link></li>
             </>
           )}
-          {user && (
-            <li>
-              <button onClick={logout}>Logout</button>
-            </li>
+          {/* Customer only — no logout */}
+          {user && !user.isAdmin && (
+            <li><Link to="/orders">My Orders</Link></li>
           )}
         </ul>
       </div>
 
-      {/* Overlay backdrop for mobile menu */}
-      {mobileOpen && (
-        <div className="mobile-menu-backdrop" onClick={() => setMobileOpen(false)} />
-      )}
+      {mobileOpen && <div className="mobile-menu-backdrop" onClick={() => setMobileOpen(false)} />}
     </>
   );
 };

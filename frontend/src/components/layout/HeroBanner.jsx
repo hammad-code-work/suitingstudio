@@ -1,68 +1,86 @@
 // src/components/layout/HeroBanner.jsx
-import React from 'react';
+import React, { useRef } from 'react';
 import Slider from 'react-slick';
 import { Link } from 'react-router-dom';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import './HeroBanner.css';
+
+// ── YOUR LOCAL IMAGE ─────────────────────────────────────────
+// Your file is at: src/components/assets/img.jpg
+// Correct relative path from HeroBanner.jsx (inside src/components/layout/):
+import heroImage1 from '../assets/hero1.jpeg';
+import heroImage2 from '../assets/hero2.jpeg';
+import heroImage3 from '../assets/hero3.jpg';
+// ─────────────────────────────────────────────────────────────
 
 const slides = [
   {
     id: 1,
     tag: 'New Collection',
-    title: 'Unleash Your Style\nWith Our New\nCollection',
-    subtitle: 'Discover premium women\'s garments crafted with passion',
+    title: 'UNLEASH YOUR STYLE WITH OUR NEW COLLECTION',
+    subtitle: "Discover premium women's garments crafted with passion",
     cta: 'Shop Women',
     link: '/shop/Women',
     bgColor: '#fdf6ee',
     accentColor: '#c8860a',
-    image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&q=80',
+    image: heroImage1,
   },
   {
     id: 2,
     tag: 'Kids Collection',
-    title: 'Adorable Styles\nFor Little\nOnes',
+    title: 'ADORABLE STYLES FOR LITTLE ONES',
     subtitle: 'Comfortable and stylish clothing for children aged 1-12 years',
     cta: 'Shop Kids',
     link: '/shop/Kids',
     bgColor: '#eef5fd',
     accentColor: '#2563eb',
-    image: 'https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?w=600&q=80',
+    image: heroImage2,
   },
   {
     id: 3,
     tag: 'Season Sale',
-    title: 'Exclusive Sale\nUp to 40%\nOff',
+    title: 'EXCLUSIVE SALE UP TO 40% OFF',
     subtitle: 'Limited time offers on our finest garment collections',
     cta: 'Shop Sale',
     link: '/shop?sale=true',
     bgColor: '#fdf0f0',
     accentColor: '#e63946',
-    image: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&q=80',
+    image: heroImage3,
   },
 ];
 
 const HeroBanner = () => {
+  const sliderRef = useRef(null);
+
   const settings = {
     dots: true,
     infinite: true,
-    speed: 700,
+    speed: 600,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 5000,
-    pauseOnHover: true,
+    autoplaySpeed: 2500,
+    pauseOnHover: false,
+    pauseOnFocus: false,
+    cssEase: 'ease-in-out',
     arrows: false,
-    dotsClass: 'hero-dots',
-    appendDots: (dots) => <div className="hero-dots-wrap">{dots}</div>,
-    customPaging: () => <div className="hero-dot" />,
+    appendDots: (dots) => (
+      <div className="hero-dots-wrap">
+        <ul className="hero-dots-list">{dots}</ul>
+      </div>
+    ),
+    customPaging: () => <button className="hero-dot" />,
   };
 
   return (
     <section className="hero-banner">
-      <Slider {...settings}>
+      {/* Slider */}
+      <Slider ref={sliderRef} {...settings}>
         {slides.map((slide) => (
           <div key={slide.id}>
             <div className="hero-slide" style={{ background: slide.bgColor }}>
-              {/* Left — follow us */}
+
+              {/* Follow us — vertical left */}
               <div className="hero-follow">
                 <span>Follow Us</span>
                 <div className="hero-follow-links">
@@ -72,21 +90,16 @@ const HeroBanner = () => {
                 </div>
               </div>
 
-              {/* Content */}
+              {/* Text content */}
               <div className="hero-content">
                 <div className="hero-tag">
                   <span style={{ background: slide.accentColor }} />
                   {slide.tag}
                 </div>
-                <h1 className="hero-title">
-                  {slide.title.split('\n').map((line, i) => (
-                    <React.Fragment key={i}>{line}<br /></React.Fragment>
-                  ))}
-                </h1>
+                <h1 className="hero-title">{slide.title}</h1>
                 <p className="hero-subtitle">{slide.subtitle}</p>
                 <Link to={slide.link} className="btn btn-primary btn-lg hero-cta">
-                  {slide.cta}
-                  <span className="hero-cta-arrow">→</span>
+                  {slide.cta} <span className="hero-cta-arrow">→</span>
                 </Link>
               </div>
 
@@ -99,10 +112,31 @@ const HeroBanner = () => {
                   onError={(e) => { e.target.style.display = 'none'; }}
                 />
               </div>
+
             </div>
           </div>
         ))}
       </Slider>
+
+      {/* Prev arrow — OUTSIDE Slider so z-index works */}
+      <button
+        className="hero-arrow hero-arrow--prev"
+        onClick={() => { sliderRef.current?.slickPrev(); }}
+        aria-label="Previous slide"
+        type="button"
+      >
+        <FiChevronLeft size={24} />
+      </button>
+
+      {/* Next arrow */}
+      <button
+        className="hero-arrow hero-arrow--next"
+        onClick={() => { sliderRef.current?.slickNext(); }}
+        aria-label="Next slide"
+        type="button"
+      >
+        <FiChevronRight size={24} />
+      </button>
     </section>
   );
 };

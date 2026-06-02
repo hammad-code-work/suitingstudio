@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiHeart, FiShoppingBag, FiEye } from 'react-icons/fi';
 import { useCart } from '../../context/CartContext';
+import toast from 'react-hot-toast';
 import Rating from '../common/Rating';
 import './ProductCard.css';
 
@@ -19,8 +20,11 @@ const ProductCard = ({ product }) => {
 
   const handleQuickAdd = (e) => {
     e.preventDefault();
-    // Add with first available size
-    const size = product.sizes?.[0] || '';
+    if (product.stock === 0) {
+      toast.error('This product is out of stock');
+      return;
+    }
+    const size  = product.sizes?.[0]  || '';
     const color = product.colors?.[0] || '';
     addToCart(product, size, color, 1);
   };

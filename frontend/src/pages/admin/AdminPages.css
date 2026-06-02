@@ -144,3 +144,40 @@
 @media (max-width: 500px) {
   .admin-stats { grid-template-columns: 1fr 1fr; }
 }
+
+/* ── Admin Responsive Fixes ──────────────────────────────── */
+@media (max-width: 900px) {
+  /* Dashboard stats — 2 columns on tablet */
+  .admin-stats { grid-template-columns: repeat(2, 1fr); }
+
+  /* Form cards full width */
+  .admin-form-card { max-width: 100%; }
+
+  /* Product/Order add forms — single column */
+  .admin-page > form > div[style*="grid-template-columns: 1fr 340px"],
+  .admin-page > form > div[style*="gridTemplateColumns"] {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Tables scrollable */
+  .admin-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .admin-table { min-width: 600px; }
+
+  /* Page padding */
+  .admin-page { padding: 72px 16px 32px; } /* 72px top for mobile toggle button */
+
+  /* Order/Product detail grids */
+  div[style*="grid-template-columns: 1fr 320px"],
+  div[style*="grid-template-columns: 1fr 300px"],
+  div[style*="gridTemplateColumns: '1fr 320px'"] {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-stats { grid-template-columns: 1fr 1fr; }
+  .admin-page__header { flex-direction: column; align-items: flex-start; }
+  .admin-page__title { font-size: 22px; }
+}

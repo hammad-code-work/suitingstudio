@@ -1,139 +1,294 @@
 /* src/components/layout/HeroBanner.css */
-.hero-banner { position: relative; overflow: hidden; }
 
+/* ── Banner wrapper ───────────────────────────────────────── */
+.hero-banner {
+  position: relative;
+  width: 100%;
+  overflow: visible;   /* must be visible so arrows show outside */
+}
+
+/* slick wrapper must not clip arrows */
+.hero-banner .slick-slider,
+.hero-banner .slick-list {
+  overflow: hidden;
+}
+
+/* ── Each slide ──────────────────────────────────────────── */
 .hero-slide {
   display: flex;
-  align-items: center;
-  min-height: 560px;
-  padding: 60px 80px 60px 40px;
+  flex-direction: row;
+  align-items: stretch;
+  width: 90%;
+  min-height: 520px;
   position: relative;
   overflow: hidden;
 }
 
-/* Follow us vertical text */
+/* ── Follow us — left edge ───────────────────────────────── */
 .hero-follow {
   position: absolute;
-  left: 16px; top: 50%;
+  left: 14px;
+  top: 50%;
   transform: translateY(-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 16px;
-  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  z-index: 3;
 }
 .hero-follow span {
   writing-mode: vertical-rl;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 10px;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 2px;
   color: var(--color-text-muted);
 }
-.hero-follow-links {
-  display: flex; flex-direction: column; gap: 8px;
-}
+.hero-follow-links { display: flex; flex-direction: column; gap: 7px; }
 .hero-follow-links a {
-  width: 28px; height: 28px;
+  width: 26px; height: 26px;
   border: 1px solid var(--color-border);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 10px; font-weight: 700;
   color: var(--color-text-muted);
   transition: var(--transition);
 }
 .hero-follow-links a:hover { border-color: var(--color-primary); color: var(--color-primary); }
 
-/* Content */
+/* ── Text content — left half ───────────────────────────── */
 .hero-content {
   flex: 1;
-  max-width: 520px;
-  padding-left: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 48px 60px 80px;
   z-index: 2;
+  min-width: 0;
 }
+
 .hero-tag {
   display: flex; align-items: center; gap: 10px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px;
   color: var(--color-text-muted);
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
-.hero-tag span {
-  display: block;
-  width: 32px; height: 2px;
-  border-radius: 2px;
-}
+.hero-tag span { display: block; width: 28px; height: 2px; border-radius: 2px; flex-shrink: 0; }
 
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(32px, 5vw, 58px);
+  font-size: clamp(26px, 3.5vw, 50px);
   font-weight: 700;
-  line-height: 1.1;
+  line-height: 1.15;
   color: var(--color-primary);
-  margin-bottom: 20px;
-  text-transform: uppercase;
+  margin-bottom: 16px;
 }
+
 .hero-subtitle {
-  font-size: 16px;
+  font-size: 15px;
   color: var(--color-text-muted);
-  margin-bottom: 36px;
+  margin-bottom: 32px;
   line-height: 1.6;
-  max-width: 380px;
+  max-width: 400px;
 }
+
 .hero-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 14px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  align-self: flex-start;
+  display: inline-flex; align-items: center;
+  gap: 12px; font-size: 13px;
+  letter-spacing: 0.8px; text-transform: uppercase;
 }
-.hero-cta-arrow {
-  transition: transform 0.25s ease;
-}
+.hero-cta-arrow { transition: transform 0.25s ease; }
 .hero-cta:hover .hero-cta-arrow { transform: translateX(6px); }
 
-/* Image */
+/* ── Image — right half, fills full height ───────────────── */
 .hero-image {
   position: relative;
-  width: 380px;
-  height: 480px;
+  /* EXTENDED: takes up 45% of banner width */
+  width: 25%;
   flex-shrink: 0;
-  z-index: 1;
+  min-height: 520px;
+  overflow: hidden;
 }
 .hero-image-bg {
   position: absolute;
-  inset: 20px 0 0 20px;
-  border-radius: var(--radius-lg);
+  inset: 0;
+  z-index: 0;
 }
 .hero-image img {
-  position: relative;
-  width: 100%; height: 100%;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  object-position: center top;
   z-index: 1;
 }
 
-/* Dots */
-.hero-dots-wrap { position: absolute; bottom: 24px; left: 80px; z-index: 10; }
-.hero-dots { display: flex !important; gap: 8px; list-style: none; }
+/* ── Arrow buttons ───────────────────────────────────────── */
+.hero-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  /* HIGH z-index — above everything */
+  z-index: 9999;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.95);
+  border: 1.5px solid rgba(255,255,255,0.6);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+  color: var(--color-primary);
+  transition: all 0.2s ease;
+  /* Prevent slick from interfering */
+  pointer-events: all !important;
+  outline: none;
+}
+.hero-arrow:hover {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+  transform: translateY(-50%) scale(1.08);
+}
+.hero-arrow:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+/* Position: prev clears the "Follow Us" column */
+.hero-arrow--prev { left: 58px; }
+.hero-arrow--next { right: 16px; }
+
+/* ── Dots ────────────────────────────────────────────────── */
+.hero-dots-wrap {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+}
+.hero-dots-list {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+  padding: 0; margin: 0;
+}
 .hero-dot {
   width: 20px; height: 4px;
-  background: rgba(26,26,46,0.2);
   border-radius: 2px;
-  cursor: pointer;
-  transition: var(--transition);
+  background: rgba(26,26,46,0.2);
+  border: none; cursor: pointer; padding: 0;
+  display: block;
+  transition: all 0.25s ease;
 }
-:global(.slick-active) .hero-dot {
-  width: 36px;
+.hero-dots-list li.slick-active .hero-dot {
+  width: 38px;
   background: var(--color-primary);
 }
 
-@media (max-width: 900px) {
-  .hero-slide { flex-direction: column; padding: 48px 24px; min-height: auto; gap: 32px; }
-  .hero-follow { display: none; }
-  .hero-content { padding-left: 0; max-width: 100%; text-align: center; }
-  .hero-subtitle { max-width: 100%; }
-  .hero-image { width: 100%; max-width: 340px; height: 300px; margin: 0 auto; }
-  .hero-dots-wrap { left: 50%; transform: translateX(-50%); }
+/* ── Slick overrides ─────────────────────────────────────── */
+.hero-banner .slick-dots { display: none !important; } /* we use appendDots */
+.hero-banner .slick-track { pointer-events: none; }
+.hero-banner .slick-slide,
+.hero-banner .slick-slide > div { pointer-events: all; }
+
+/* ── Responsive ──────────────────────────────────────────── */
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .hero-slide {
+    width: 100%; /* Ensures the slide fills the screen width properly */
+  }
+  .hero-content { 
+    padding: 50px 32px 50px 70px; 
+  }
+  .hero-image { 
+    width: 50%; 
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-slide {
+    flex-direction: column;
+    min-height: auto;
+    width: 100%;
+  }
+  
+  /* Image on top on mobile - Optimized to prevent heavy zoom */
+  .hero-image {
+    width: 100%;
+    min-height: auto; /* Removed rigid min-height */
+    height: 420px;    /* Increased height for a better mobile aspect ratio */
+    order: 0;
+  }
+  
+  .hero-image img {
+    object-fit: contain;       /* Prevents zooming/cropping; fits entire image */
+    object-position: center;   /* Centers the image perfectly */
+    background: #f9f9f9;       /* Optional fallback color behind the contained image */
+  }
+
+  .hero-content {
+    order: 1;
+    padding: 40px 24px 80px;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .hero-subtitle { 
+    max-width: 100%; 
+  }
+  
+  .hero-cta { 
+    align-self: center; 
+  }
+  
+  .hero-follow { 
+    display: none; 
+  }
+  
+   /* Mobile Arrows: Repositioned safely to the bottom corner of the text content */
+  .hero-arrow { 
+    width: 44px; 
+    height: 44px; 
+    top: auto;
+    bottom: 20px; /* Anchored neatly to the bottom */
+    transform: none;
+  }
+  .hero-arrow:hover, .hero-arrow:active {
+    transform: scale(1.05); /* Adjusted animation since top translate was removed */
+  }
+  
+  /* Pushes buttons to the bottom right side together */
+  .hero-arrow--prev { 
+    left: auto;
+    right: 74px; 
+  }
+  .hero-arrow--next { 
+    right: 20px; 
+  }
+  
+  /* Keeps dots centered away from the new arrow positions */
+  .hero-dots-wrap { 
+    bottom: 30px;
+    left: 20px;
+    transform: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-image { 
+    height: 340px; /* Proportional scaling down for small pocket phones */
+  }
+  .hero-content { 
+    padding: 30px 16px 80px; 
+  }
+  .hero-title { 
+    font-size: clamp(22px, 6vw, 32px); 
+  }
 }

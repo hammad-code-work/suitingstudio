@@ -1,54 +1,73 @@
 // src/components/admin/AdminSidebar.jsx
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { FiGrid, FiPackage, FiShoppingBag, FiTag, FiLogOut, FiMenu, FiX, FiUsers } from 'react-icons/fi';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { FiGrid, FiPackage, FiShoppingBag, FiTag, FiLogOut, FiMenu, FiX, FiExternalLink } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 import './AdminSidebar.css';
 
+// Fix 5: Removed Users from nav items
 const navItems = [
-  { icon: FiGrid, label: 'Dashboard', to: '/admin' },
-  { icon: FiPackage, label: 'Products', to: '/admin/products' },
-  { icon: FiShoppingBag, label: 'Orders', to: '/admin/orders' },
-  { icon: FiTag, label: 'Categories', to: '/admin/categories' },
-  { icon: FiUsers, label: 'Users', to: '/admin/users' },
+  { icon: FiGrid,        label: 'Dashboard',  to: '/admin' },
+  { icon: FiPackage,     label: 'Products',   to: '/admin/products' },
+  { icon: FiShoppingBag, label: 'Orders',     to: '/admin/orders' },
+  { icon: FiTag,         label: 'Categories', to: '/admin/categories' },
 ];
 
 const AdminSidebar = () => {
   const { logout, user } = useAuth();
-  const location = useLocation();
+  const navigate          = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const sidebar = (
+  const handleLogout = () => {
+    logout();
+    navigate('/admin/login');
+  };
+
+  const SidebarContent = () => (
     <div className="admin-sidebar__inner">
-      <div className="admin-sidebar__logo">
-        <Link to="/">✦ SuitingStudio</Link>
-        <span>Admin</span>
+      {/* Fix 2: Logo → /admin (dashboard), not public site */}
+      <div className="admin-sidebar__logo-wrap">
+        <Link
+          to="/admin"
+          className="admin-sidebar__logo"
+          onClick={() => setMobileOpen(false)}
+        >
+          <span>✦</span> SuitingStudio
+        </Link>
+        <span className="admin-sidebar__panel-label">Admin Panel</span>
       </div>
 
       <nav className="admin-sidebar__nav">
         {navItems.map(({ icon: Icon, label, to }) => (
-          <Link
+          <NavLink
             key={to}
             to={to}
-            className={`admin-sidebar__link ${location.pathname === to ? 'active' : ''}`}
+            end={to === '/admin'}
+            className={({ isActive }) => `admin-sidebar__link${isActive ? ' active' : ''}`}
             onClick={() => setMobileOpen(false)}
           >
             <Icon size={18} />
             <span>{label}</span>
-          </Link>
+          </NavLink>
         ))}
       </nav>
 
       <div className="admin-sidebar__footer">
         <div className="admin-sidebar__user">
-          <div className="admin-sidebar__avatar">{user?.name?.[0] || 'A'}</div>
+          <div className="admin-sidebar__avatar">
+            {user?.name?.[0]?.toUpperCase() || 'A'}
+          </div>
           <div>
-            <p>{user?.name}</p>
+            <p className="admin-sidebar__user-name">{user?.name}</p>
             <small>Administrator</small>
           </div>
         </div>
-        <button className="admin-sidebar__logout" onClick={logout}>
-          <FiLogOut size={16} /> Logout
+        {/* View public site opens in new tab */}
+        <a href="/" target="_blank" rel="noreferrer" className="admin-sidebar__view-site">
+          <FiExternalLink size={13} /> View Public Site
+        </a>
+        <button className="admin-sidebar__logout" onClick={handleLogout}>
+          <FiLogOut size={15} /> Logout
         </button>
       </div>
     </div>
@@ -56,18 +75,16 @@ const AdminSidebar = () => {
 
   return (
     <>
-      {/* Desktop */}
-      <aside className="admin-sidebar admin-sidebar--desktop">{sidebar}</aside>
+      <aside className="admin-sidebar admin-sidebar--desktop"><SidebarContent /></aside>
 
       {/* Mobile toggle */}
       <button className="admin-sidebar__mobile-toggle" onClick={() => setMobileOpen(!mobileOpen)}>
-        {mobileOpen ? <FiX size={22} /> : <FiMenu size={22} />}
+        {mobileOpen ? <FiX size={20} /> : <FiMenu size={20} />}
       </button>
 
-      {/* Mobile drawer */}
       {mobileOpen && (
         <>
-          <aside className="admin-sidebar admin-sidebar--mobile">{sidebar}</aside>
+          <aside className="admin-sidebar admin-sidebar--mobile"><SidebarContent /></aside>
           <div className="admin-sidebar__backdrop" onClick={() => setMobileOpen(false)} />
         </>
       )}

@@ -6,7 +6,6 @@ import { FiEye, FiFilter, FiTrash2 } from 'react-icons/fi';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import Loader from '../../components/common/Loader';
 import { orderService } from '../../services/orderService';
-import api from '../../services/api';
 import toast from 'react-hot-toast';
 import './AdminPages.css';
 
@@ -30,8 +29,8 @@ const AdminOrdersPage = () => {
       if (paymentFilter) params.paymentStatus = paymentFilter;
       const { data } = await orderService.getAll(params);
       setOrders(data.orders || []);
-      setPages(data.pages || 1);
-      setTotal(data.total || 0);
+      setPages(data.pages   || 1);
+      setTotal(data.total   || 0);
     } catch (err) {
       console.error(err);
     } finally {
@@ -41,11 +40,11 @@ const AdminOrdersPage = () => {
 
   useEffect(() => { fetchOrders(); }, [page, statusFilter, paymentFilter]);
 
-  // ── Same pattern as product delete ───────────────────────
-  const handleDelete = async (orderId) => {
+  // ── Exact same pattern as AdminProductsPage ───────────────
+  const handleDelete = async (id) => {
     if (!window.confirm('Delete this order? This cannot be undone.')) return;
     try {
-      await api.delete(`/admin/orders/${orderId}`);
+      await orderService.delete(id);
       toast.success('Order deleted');
       fetchOrders();
     } catch (err) {
@@ -59,6 +58,7 @@ const AdminOrdersPage = () => {
       <main className="admin-main">
         <Helmet><title>Orders — SuitingStudio Admin</title></Helmet>
         <div className="admin-page">
+
           <div className="admin-page__header">
             <div>
               <h1 className="admin-page__title">Orders</h1>
@@ -129,20 +129,11 @@ const AdminOrdersPage = () => {
                           </span>
                         </td>
                         <td><strong>${order.totalAmount}</strong></td>
-                        <td>
-                          <span className={`status-badge status-${order.paymentStatus}`}>
-                            {order.paymentStatus}
-                          </span>
-                        </td>
-                        <td>
-                          <span className={`status-badge status-${order.orderStatus}`}>
-                            {order.orderStatus}
-                          </span>
-                        </td>
+                        <td><span className={`status-badge status-${order.paymentStatus}`}>{order.paymentStatus}</span></td>
+                        <td><span className={`status-badge status-${order.orderStatus}`}>{order.orderStatus}</span></td>
                         <td style={{ fontSize: '13px', color: 'var(--color-text-muted)', whiteSpace: 'nowrap' }}>
                           {new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                         </td>
-                        {/* ── Same as products: View + Delete buttons ── */}
                         <td>
                           <div className="admin-table__actions">
                             <Link to={`/admin/orders/${order._id}`} className="btn btn-secondary btn-sm" title="View">
@@ -165,15 +156,12 @@ const AdminOrdersPage = () => {
             </div>
           )}
 
-          {/* Pagination */}
           {pages > 1 && (
             <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '20px' }}>
               {Array.from({ length: pages }, (_, i) => i + 1).map((p) => (
                 <button key={p}
                   className={`btn btn-sm ${page === p ? 'btn-primary' : 'btn-secondary'}`}
-                  onClick={() => setPage(p)}>
-                  {p}
-                </button>
+                  onClick={() => setPage(p)}>{p}</button>
               ))}
             </div>
           )}

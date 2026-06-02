@@ -34,6 +34,16 @@ const ProductDetailPage = () => {
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [wishlist, setWishlist] = useState(false);
+  const imgRef = React.useRef(null);
+
+  // Track cursor position for zoom origin
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    e.currentTarget.style.setProperty('--zoom-x', x + '%');
+    e.currentTarget.style.setProperty('--zoom-y', y + '%');
+  };
   const [reviewText, setReviewText] = useState('');
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewLoading, setReviewLoading] = useState(false);
@@ -60,8 +70,14 @@ const ProductDetailPage = () => {
   }, [id]);
 
   const handleAddToCart = () => {
+    if (product.stock === 0) {
+      toast.error('Sorry, this product is out of stock!', {
+        icon: '🚫',
+        duration: 3000,
+      });
+      return;
+    }
     if (!selectedSize) { toast.error('Please select a size'); return; }
-    if (product.stock === 0) { toast.error('Out of stock'); return; }
     addToCart(product, selectedSize, selectedColor, quantity);
   };
 
@@ -120,7 +136,7 @@ const ProductDetailPage = () => {
                   </button>
                 ))}
               </div>
-              <div className="product-detail__main-img" onClick={() => setZoomOpen(true)} title="Click to zoom">
+              <div className="product-detail__main-img" onClick={() => setZoomOpen(true)} title="Click to zoom" onMouseMove={handleMouseMove}>
                 <img
                   src={product.images?.[selectedImg]?.url || 'https://via.placeholder.com/500x600'}
                   alt={product.title}
@@ -213,11 +229,10 @@ const ProductDetailPage = () => {
               {/* Add to cart */}
               <div className="product-detail__actions">
                 <button
-                  className="btn btn-primary btn-lg product-detail__add-btn"
+                  className={`btn btn-lg product-detail__add-btn ${product.stock === 0 ? 'btn-oos' : 'btn-primary'}`}
                   onClick={handleAddToCart}
-                  disabled={product.stock === 0}
                 >
-                  <FiShoppingBag size={18} /> Add to Cart
+                  {product.stock === 0 ? 'Out of Stock' : <><FiShoppingBag size={18} /> Add to Cart</>}
                 </button>
                 <button
                   className="btn btn-secondary product-detail__share"
